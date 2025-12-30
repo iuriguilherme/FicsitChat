@@ -26,14 +26,14 @@ void FFicsitChatModule::ShutdownModule() {
 void FFicsitChatModule::RegisterHooks() {
 #if !WITH_EDITOR
 	AFGChatManager *afgChatManager = GetMutableDefault<AFGChatManager>();
-	SUBSCRIBE_METHOD_VIRTUAL_AFTER(AFGChatManager::Multicast_BroadcastChatMessage, afgChatManager, [](AFGChatManager *self, const FChatMessageStruct &newMessage) {
-		UE_LOG(LogFicsitChat, Verbose, TEXT("Chat message by %s sent to all clients: %s"), *newMessage.Sender->GetUserName(), *newMessage.MessageString);
+	SUBSCRIBE_METHOD_VIRTUAL_AFTER(AFGChatManager::AddChatMessageToReceived, afgChatManager, [](AFGChatManager *self, FChatMessageStruct newMessage) {
+		UE_LOG(LogFicsitChat, Verbose, TEXT("Chat message by %s sent to all clients: %s"), *newMessage.MessageSender.ToString(), *newMessage.MessageText.ToString());
 
 		FFicsitChat_ConfigStruct config = FFicsitChat_ConfigStruct::GetActiveConfig((UFicsitChatWorldModule *)self->GetWorld());
 		UFicsitChatWorldModule *worldModule = (UFicsitChatWorldModule *)self->GetWorld()->GetSubsystem<UWorldModuleManager>()->FindModule(TEXT("FicsitChat"));
 
-		std::string userName = TCHAR_TO_UTF8(*newMessage.Sender->GetUserName());
-		std::string message = TCHAR_TO_UTF8(*newMessage.MessageString);
+		std::string userName = TCHAR_TO_UTF8(*newMessage.MessageSender.ToString());
+		std::string message = TCHAR_TO_UTF8(*newMessage.MessageText.ToString());
 		if (message == std::string("has joined the game!") && !config.HasJoinedMessage) {
 			return;
 		}

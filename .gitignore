@@ -86,9 +86,12 @@ DerivedDataCache/*
 # Built Visual Studio Code Extensions
 *.vsix
 
-# DPP DLLs and library folders
-!Source/ThirdParty/Binaries/**/*.dll
-!Source/ThirdParty/Binaries/**/*.lib
+# DPP library files (developers must extract locally)
+# Download from https://dpp.dev/install-windows-vs-zip.html
+Source/ThirdParty/DPPLibrary
+!Source/ThirdParty/DPPLibrary/DPPLibrary.Build.cs
 
+Binaries
 *.pdb
 *.modules
+*.lib

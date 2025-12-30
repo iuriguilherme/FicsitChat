@@ -9,6 +9,7 @@ public class FicsitChat : ModuleRules
 {
 	public FicsitChat(ReadOnlyTargetRules Target) : base(Target)
 	{
+		CppStandard = CppStandardVersion.Cpp20;
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
 		// FactoryGame transitive dependencies

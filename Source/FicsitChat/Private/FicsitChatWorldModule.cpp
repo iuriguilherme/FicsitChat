@@ -42,7 +42,7 @@ void UFicsitChatWorldModule::DispatchLifecycleEvent(ELifecyclePhase Phase) {
 		botDiscriminator = bot->me.discriminator;
 	});
 
-	bot->on_message_create([&](const dpp::message_create_t &event) {
+	bot->on_message_create([this](const dpp::message_create_t &event) {
 		FString messageContent = event.msg.content.c_str();
 		FString messageAuthor = event.msg.author.username.c_str();
 		uint16_t messageAuthorDiscriminator = event.msg.author.discriminator;
@@ -50,7 +50,7 @@ void UFicsitChatWorldModule::DispatchLifecycleEvent(ELifecyclePhase Phase) {
 		if (messageAuthor == botUsername && messageAuthorDiscriminator == botDiscriminator)
 			return;
 
-		AsyncTask(ENamedThreads::GameThread, [=]() { SendMessageToGame(messageContent, messageAuthor); });
+		AsyncTask(ENamedThreads::GameThread, [this, messageContent, messageAuthor]() { SendMessageToGame(messageContent, messageAuthor); });
 	});
 
 	bot->on_slashcommand([](auto event) {
@@ -59,7 +59,7 @@ void UFicsitChatWorldModule::DispatchLifecycleEvent(ELifecyclePhase Phase) {
 		}
 	});
 
-	bot->start(true);
+	bot->start(dpp::st_return);
 }
 
 bool UFicsitChatWorldModule::ValidateBotToken(FString botToken) {
@@ -82,11 +82,11 @@ void UFicsitChatWorldModule::SendMessageToGame(FString messageContent, FString m
 	FFicsitChat_ConfigStruct config = FFicsitChat_ConfigStruct::GetActiveConfig(GetWorld());
 
 	FChatMessageStruct chatMessageStruct{};
-	chatMessageStruct.MessageString = messageContent;
+	chatMessageStruct.MessageText = FText::FromString(messageContent);
 	chatMessageStruct.MessageType = EFGChatMessageType::CMT_PlayerMessage;
 	chatMessageStruct.ServerTimeStamp = GetWorld()->TimeSeconds;
-	chatMessageStruct.CachedPlayerName = messageAuthor;
-	chatMessageStruct.CachedColor = FLinearColor(config.ChatMessageColor.Red, config.ChatMessageColor.Green, config.ChatMessageColor.Blue);
+	chatMessageStruct.MessageSender = FText::FromString(messageAuthor);
+	chatMessageStruct.MessageSenderColor = FLinearColor(config.ChatMessageColor.Red, config.ChatMessageColor.Green, config.ChatMessageColor.Blue);
 
 	AFGChatManager *chatManager = AFGChatManager::Get(GetWorld());
 	chatManager->AddChatMessageToReceived(chatMessageStruct);
