@@ -42,13 +42,16 @@ void UFicsitChatWorldModule::DispatchLifecycleEvent(ELifecyclePhase Phase) {
 		botDiscriminator = bot->me.discriminator;
 	});
 
-	bot->on_message_create([this](const dpp::message_create_t &event) {
-		FString messageContent = event.msg.content.c_str();
+	bot->on_message_create([this, config](const dpp::message_create_t &event) {
+		FString messageChannelId = FString(std::to_string(event.msg.channel_id).c_str());
+		if (messageChannelId != config.ChannelId)
+			return;
+
 		FString messageAuthor = event.msg.author.username.c_str();
 		uint16_t messageAuthorDiscriminator = event.msg.author.discriminator;
-
 		if (messageAuthor == botUsername && messageAuthorDiscriminator == botDiscriminator)
 			return;
+		FString messageContent = event.msg.content.c_str();
 
 		AsyncTask(ENamedThreads::GameThread, [this, messageContent, messageAuthor]() { SendMessageToGame(messageContent, messageAuthor); });
 	});
