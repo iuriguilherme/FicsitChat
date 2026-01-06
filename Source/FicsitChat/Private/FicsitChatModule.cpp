@@ -32,6 +32,12 @@ void FFicsitChatModule::RegisterHooks() {
 		FFicsitChat_ConfigStruct config = FFicsitChat_ConfigStruct::GetActiveConfig((UFicsitChatWorldModule *)self->GetWorld());
 		UFicsitChatWorldModule *worldModule = (UFicsitChatWorldModule *)self->GetWorld()->GetSubsystem<UWorldModuleManager>()->FindModule(TEXT("FicsitChat"));
 
+		// Check if worldModule exists and bot is initialized
+		if (!worldModule || !worldModule->bot.IsValid()) {
+			UE_LOG(LogFicsitChat, Warning, TEXT("Discord bot not initialized, cannot send message"));
+			return;
+		}
+
 		std::string userName = TCHAR_TO_UTF8(*newMessage.MessageSender.ToString());
 		std::string message = TCHAR_TO_UTF8(*newMessage.MessageText.ToString());
 		if (message == std::string("has joined the game!") && !config.HasJoinedMessage) {
