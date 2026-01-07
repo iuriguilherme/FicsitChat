@@ -56,7 +56,10 @@ The configuration file's content looks like this:
 		"Green": 0.40000000596046448,
 		"Blue": 0.94999998807907104
 	},
-	"SML_ModVersion_DoNotChange": "1.0.0"
+	"EnableFooter": true,
+    "FooterText": "FICSIT.chat",
+    "EnableDebugLogging": false,
+	"SML_ModVersion_DoNotChange": "1.2.0"
 }
 ```
 
