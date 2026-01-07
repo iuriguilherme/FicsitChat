@@ -40,6 +40,15 @@ public:
     UPROPERTY(BlueprintReadWrite)
     FFicsitChat_ConfigStruct_ChatMessageColor ChatMessageColor;
 
+    UPROPERTY(BlueprintReadWrite)
+    bool ShowFooter{};
+
+    UPROPERTY(BlueprintReadWrite)
+    FString FooterText{};
+
+    UPROPERTY(BlueprintReadWrite)
+    bool EnableDebugLogging{};
+
     /* Retrieves active configuration value and returns object of this struct containing it */
     static FFicsitChat_ConfigStruct GetActiveConfig(UObject* WorldContext) {
         FFicsitChat_ConfigStruct ConfigStruct{};
